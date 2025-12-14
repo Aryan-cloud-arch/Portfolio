@@ -1,58 +1,160 @@
 // ================================
-// Ambient Sound Control - AUTO PLAY
+// Space Ambient Sound Generator
 // ================================
-const ambientAudio = document.getElementById('ambient-audio');
+let audioContext;
+let isPlaying = false;
+let hasStarted = false;
+let masterGain;
+let oscillators = [];
+
 const soundToggle = document.getElementById('sound-toggle');
 const soundIcon = document.getElementById('sound-icon');
 
-// Set volume (very silent - 15%)
-ambientAudio.volume = 0.15;
+// Create space ambient sound
+function createSpaceAmbient() {
+    // Create audio context
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Master volume (very low - soothing)
+    masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.08; // Very silent
+    masterGain.connect(audioContext.destination);
+    
+    // Deep space drone - Base frequency
+    const drone1 = audioContext.createOscillator();
+    drone1.type = 'sine';
+    drone1.frequency.value = 60; // Deep hum
+    
+    const drone1Gain = audioContext.createGain();
+    drone1Gain.gain.value = 0.3;
+    drone1.connect(drone1Gain);
+    drone1Gain.connect(masterGain);
+    drone1.start();
+    oscillators.push(drone1);
+    
+    // Second harmonic
+    const drone2 = audioContext.createOscillator();
+    drone2.type = 'sine';
+    drone2.frequency.value = 90;
+    
+    const drone2Gain = audioContext.createGain();
+    drone2Gain.gain.value = 0.15;
+    drone2.connect(drone2Gain);
+    drone2Gain.connect(masterGain);
+    drone2.start();
+    oscillators.push(drone2);
+    
+    // High ethereal tone
+    const highTone = audioContext.createOscillator();
+    highTone.type = 'sine';
+    highTone.frequency.value = 220;
+    
+    const highToneGain = audioContext.createGain();
+    highToneGain.gain.value = 0.05;
+    highTone.connect(highToneGain);
+    highToneGain.connect(masterGain);
+    highTone.start();
+    oscillators.push(highTone);
+    
+    // Subtle frequency modulation for movement
+    const lfo = audioContext.createOscillator();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.1; // Very slow
+    
+    const lfoGain = audioContext.createGain();
+    lfoGain.gain.value = 5;
+    lfo.connect(lfoGain);
+    lfoGain.connect(drone1.frequency);
+    lfo.start();
+    oscillators.push(lfo);
+    
+    // White noise for cosmic texture
+    const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
+    const noiseData = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < noiseData.length; i++) {
+        noiseData[i] = (Math.random() * 2 - 1) * 0.02;
+    }
+    
+    const noiseSource = audioContext.createBufferSource();
+    noiseSource.buffer = noiseBuffer;
+    noiseSource.loop = true;
+    
+    // Filter the noise to make it smoother
+    const noiseFilter = audioContext.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 500;
+    
+    const noiseGain = audioContext.createGain();
+    noiseGain.gain.value = 0.5;
+    
+    noiseSource.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noiseSource.start();
+    
+    // Gentle pulsing effect
+    const pulseSpeed = 0.05;
+    function pulse() {
+        if (!isPlaying) return;
+        const time = audioContext.currentTime;
+        const pulseValue = 0.06 + Math.sin(time * pulseSpeed * Math.PI * 2) * 0.02;
+        masterGain.gain.setTargetAtTime(pulseValue, time, 0.5);
+        requestAnimationFrame(pulse);
+    }
+    pulse();
+    
+    console.log('🔊 Space ambient sound initialized');
+}
 
-let isPlaying = false;
-let hasStarted = false;
-
-// Function to start audio
+// Start the ambient sound
 function startAmbientSound() {
     if (hasStarted) return;
     
-    ambientAudio.play().then(() => {
+    try {
+        createSpaceAmbient();
         isPlaying = true;
         hasStarted = true;
         soundToggle.classList.add('playing');
         soundIcon.className = 'fas fa-volume-up';
         
-        // Remove all the listeners once started
+        // Remove listeners
         document.removeEventListener('scroll', startAmbientSound);
         document.removeEventListener('click', startAmbientSound);
         document.removeEventListener('mousemove', startAmbientSound);
         document.removeEventListener('keydown', startAmbientSound);
         document.removeEventListener('touchstart', startAmbientSound);
-    }).catch(err => {
-        console.log('Waiting for user interaction to play audio...');
-    });
+        
+        console.log('🚀 Ambient sound started!');
+    } catch (err) {
+        console.log('Audio error:', err);
+    }
 }
 
-// Try to play immediately (will work if user has interacted before)
-startAmbientSound();
-
-// If autoplay blocked, start on ANY user interaction
+// Start on ANY user interaction
 document.addEventListener('scroll', startAmbientSound, { once: true });
 document.addEventListener('click', startAmbientSound, { once: true });
 document.addEventListener('mousemove', startAmbientSound, { once: true });
 document.addEventListener('keydown', startAmbientSound, { once: true });
 document.addEventListener('touchstart', startAmbientSound, { once: true });
 
-// Toggle button now acts as mute/unmute
+// Mute/Unmute toggle
 soundToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     
+    if (!hasStarted) {
+        startAmbientSound();
+        return;
+    }
+    
     if (isPlaying) {
-        ambientAudio.pause();
+        // Mute
+        masterGain.gain.setTargetAtTime(0, audioContext.currentTime, 0.1);
         soundToggle.classList.remove('playing');
         soundIcon.className = 'fas fa-volume-mute';
         isPlaying = false;
     } else {
-        ambientAudio.play();
+        // Unmute
+        masterGain.gain.setTargetAtTime(0.08, audioContext.currentTime, 0.1);
         soundToggle.classList.add('playing');
         soundIcon.className = 'fas fa-volume-up';
         isPlaying = true;
@@ -65,6 +167,8 @@ soundToggle.addEventListener('click', (e) => {
 const particlesContainer = document.getElementById('particles');
 
 function createParticles() {
+    if (!particlesContainer) return;
+    
     for (let i = 0; i < 50; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -85,7 +189,8 @@ createParticles();
 // ================================
 window.addEventListener('load', () => {
     setTimeout(() => {
-        document.getElementById('loader').classList.add('hidden');
+        const loader = document.getElementById('loader');
+        if (loader) loader.classList.add('hidden');
     }, 1500);
 });
 
@@ -95,24 +200,26 @@ window.addEventListener('load', () => {
 const cursor = document.getElementById('cursor');
 const cursorFollower = document.getElementById('cursor-follower');
 
-document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-    
-    setTimeout(() => {
-        cursorFollower.style.left = e.clientX + 'px';
-        cursorFollower.style.top = e.clientY + 'px';
-    }, 100);
-});
+if (cursor && cursorFollower) {
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        
+        setTimeout(() => {
+            cursorFollower.style.left = e.clientX + 'px';
+            cursorFollower.style.top = e.clientY + 'px';
+        }, 100);
+    });
 
-document.querySelectorAll('a, button, .project-card, .expertise-card, .sound-toggle').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-        cursorFollower.classList.add('hovering');
+    document.querySelectorAll('a, button, .project-card, .expertise-card, .sound-toggle').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorFollower.classList.add('hovering');
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorFollower.classList.remove('hovering');
+        });
     });
-    el.addEventListener('mouseleave', () => {
-        cursorFollower.classList.remove('hovering');
-    });
-});
+}
 
 // ================================
 // Navigation
@@ -122,28 +229,29 @@ const navToggle = document.getElementById('nav-toggle');
 const navMenu = document.getElementById('nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
 
-// Scroll effect
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
-
-// Mobile toggle
-navToggle.addEventListener('click', () => {
-    navToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
-
-// Close menu on link click
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navToggle.classList.remove('active');
-        navMenu.classList.remove('active');
+if (navbar) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
     });
-});
+}
+
+if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+}
 
 // Active link on scroll
 window.addEventListener('scroll', () => {
@@ -152,8 +260,6 @@ window.addEventListener('scroll', () => {
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        
         if (scrollY >= sectionTop - 200) {
             current = section.getAttribute('id');
         }
@@ -191,7 +297,6 @@ const animateCounter = (el) => {
     updateCounter();
 };
 
-// Intersection Observer for stats
 const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -232,16 +337,16 @@ filterBtns.forEach(btn => {
 // ================================
 const contactForm = document.getElementById('contact-form');
 
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(contactForm);
-    const data = Object.fromEntries(formData);
-    
-    console.log('Form submitted:', data);
-    alert('Message sent successfully!');
-    contactForm.reset();
-});
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(contactForm);
+        const data = Object.fromEntries(formData);
+        console.log('Form submitted:', data);
+        alert('Message sent successfully!');
+        contactForm.reset();
+    });
+}
 
 // ================================
 // Smooth Reveal Animation
@@ -280,6 +385,6 @@ document.head.appendChild(style);
 // Console Easter Egg
 // ================================
 console.log('%c🚀 Welcome to Aryan\'s Space!', 'font-size: 24px; font-weight: bold;');
-console.log('%c🔊 Ambient sound auto-plays on interaction', 'font-size: 12px; color: #22c55e;');
+console.log('%c🔊 Move your mouse to start ambient sound', 'font-size: 12px; color: #22c55e;');
 console.log('%c→ GitHub: https://github.com/Aryan-cloud-arch', 'font-size: 12px; color: #6366f1;');
 console.log('%c→ Telegram: @MaiHuAryan', 'font-size: 12px; color: #6366f1;');
