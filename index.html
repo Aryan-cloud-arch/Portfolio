@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="AI Engineer & System Architect specializing in intelligent automation, ML systems, and scalable solutions.">
-    <meta name="keywords" content="AI Engineer, Python Developer, Machine Learning, Automation, System Architect">
-    <meta name="author" content="Your Name">
+    <meta name="keywords" content="AI Engineer, Python Developer, Machine Learning, Automation, System Architect, Aryan">
+    <meta name="author" content="Aryan">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Your Name - AI Engineer & System Architect">
+    <meta property="og:title" content="Aryan - AI Engineer & System Architect">
     <meta property="og:description" content="Building intelligent systems that think, automate, and scale.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourusername.github.io">
+    <meta property="og:url" content="https://aryan-cloud-arch.github.io">
     
-    <title>Your Name | AI Engineer & System Architect</title>
+    <title>Aryan | AI Engineer & System Architect</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,6 +26,21 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Ambient Space Audio -->
+    <audio id="ambient-audio" loop preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-space-ambient-hum-2873.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Sound Toggle Button -->
+    <div class="sound-toggle" id="sound-toggle" title="Toggle Ambient Sound">
+        <div class="sound-waves">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <i class="fas fa-volume-mute" id="sound-icon"></i>
+    </div>
+
     <!-- Loader -->
     <div class="loader" id="loader">
         <div class="loader-content">
@@ -38,12 +53,15 @@
     <div class="cursor" id="cursor"></div>
     <div class="cursor-follower" id="cursor-follower"></div>
 
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#" class="nav-logo">
                 <span class="logo-bracket">&lt;</span>
-                <span class="logo-text">YN</span>
+                <span class="logo-text">AR</span>
                 <span class="logo-bracket">/&gt;</span>
             </a>
             
@@ -67,6 +85,7 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-bg">
+            <div class="hero-stars"></div>
             <div class="hero-grid"></div>
             <div class="hero-glow"></div>
         </div>
@@ -187,11 +206,11 @@
                             <span class="dot red"></span>
                             <span class="dot yellow"></span>
                             <span class="dot green"></span>
-                            <span class="code-title">developer.py</span>
+                            <span class="code-title">aryan.py</span>
                         </div>
                         <pre class="code-content"><code><span class="keyword">class</span> <span class="class-name">Developer</span>:
     <span class="keyword">def</span> <span class="function">__init__</span>(<span class="param">self</span>):
-        <span class="param">self</span>.name = <span class="string">"Your Name"</span>
+        <span class="param">self</span>.name = <span class="string">"Aryan"</span>
         <span class="param">self</span>.role = <span class="string">"AI Engineer"</span>
         <span class="param">self</span>.skills = [
             <span class="string">"Python"</span>,
@@ -223,7 +242,7 @@
             </div>
             
             <div class="expertise-grid">
-                <div class="expertise-card" data-aos="fade-up">
+                <div class="expertise-card">
                     <div class="card-icon">
                         <i class="fas fa-robot"></i>
                     </div>
@@ -241,7 +260,7 @@
                     </ul>
                 </div>
                 
-                <div class="expertise-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="expertise-card">
                     <div class="card-icon">
                         <i class="fas fa-cogs"></i>
                     </div>
@@ -259,7 +278,7 @@
                     </ul>
                 </div>
                 
-                <div class="expertise-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="expertise-card">
                     <div class="card-icon">
                         <i class="fas fa-server"></i>
                     </div>
@@ -277,7 +296,7 @@
                     </ul>
                 </div>
                 
-                <div class="expertise-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="expertise-card">
                     <div class="card-icon">
                         <i class="fas fa-database"></i>
                     </div>
@@ -295,7 +314,7 @@
                     </ul>
                 </div>
                 
-                <div class="expertise-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="expertise-card">
                     <div class="card-icon">
                         <i class="fas fa-search"></i>
                     </div>
@@ -313,7 +332,7 @@
                     </ul>
                 </div>
                 
-                <div class="expertise-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="expertise-card">
                     <div class="card-icon">
                         <i class="fas fa-pen-fancy"></i>
                     </div>
@@ -393,7 +412,7 @@
                         </div>
                         <div class="project-overlay">
                             <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
-                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="https://github.com/Aryan-cloud-arch" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
                         </div>
                     </div>
                     <div class="project-content">
@@ -451,7 +470,7 @@
                             <i class="fab fa-telegram-plane"></i>
                         </div>
                         <div class="project-overlay">
-                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                            <a href="https://t.me/MaiHuAryan" class="project-link" target="_blank"><i class="fab fa-telegram-plane"></i></a>
                         </div>
                     </div>
                     <div class="project-content">
@@ -480,7 +499,7 @@
                             <i class="fas fa-brain"></i>
                         </div>
                         <div class="project-overlay">
-                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="https://github.com/Aryan-cloud-arch" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
                         </div>
                     </div>
                     <div class="project-content">
@@ -509,7 +528,7 @@
                             <i class="fas fa-spider"></i>
                         </div>
                         <div class="project-overlay">
-                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="https://github.com/Aryan-cloud-arch" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
                         </div>
                     </div>
                     <div class="project-content">
@@ -562,7 +581,7 @@
             </div>
             
             <div class="projects-cta">
-                <a href="https://github.com/yourusername" class="btn btn-primary" target="_blank">
+                <a href="https://github.com/Aryan-cloud-arch" class="btn btn-primary" target="_blank">
                     <i class="fab fa-github"></i>
                     <span>View All on GitHub</span>
                 </a>
@@ -659,7 +678,7 @@
                         <i class="fas fa-envelope"></i>
                         <div>
                             <h4>Email</h4>
-                            <a href="mailto:your@email.com">your@email.com</a>
+                            <a href="mailto:aryan@example.com">aryan@example.com</a>
                         </div>
                     </div>
                     
@@ -667,7 +686,7 @@
                         <i class="fab fa-telegram-plane"></i>
                         <div>
                             <h4>Telegram</h4>
-                            <a href="https://t.me/yourusername" target="_blank">@yourusername</a>
+                            <a href="https://t.me/MaiHuAryan" target="_blank">@MaiHuAryan</a>
                         </div>
                     </div>
                     
@@ -675,7 +694,7 @@
                         <i class="fab fa-github"></i>
                         <div>
                             <h4>GitHub</h4>
-                            <a href="https://github.com/yourusername" target="_blank">yourusername</a>
+                            <a href="https://github.com/Aryan-cloud-arch" target="_blank">Aryan-cloud-arch</a>
                         </div>
                     </div>
                     
@@ -683,7 +702,7 @@
                         <i class="fab fa-linkedin"></i>
                         <div>
                             <h4>LinkedIn</h4>
-                            <a href="https://linkedin.com/in/yourprofile" target="_blank">yourprofile</a>
+                            <a href="https://linkedin.com/in/aryan" target="_blank">Connect</a>
                         </div>
                     </div>
                 </div>
@@ -731,7 +750,7 @@
                 <div class="footer-brand">
                     <a href="#" class="footer-logo">
                         <span class="logo-bracket">&lt;</span>
-                        <span class="logo-text">YN</span>
+                        <span class="logo-text">AR</span>
                         <span class="logo-bracket">/&gt;</span>
                     </a>
                     <p>Building intelligent systems that scale.</p>
@@ -746,16 +765,16 @@
                     </div>
                     
                     <div class="footer-social">
-                        <a href="https://github.com/yourusername" target="_blank"><i class="fab fa-github"></i></a>
-                        <a href="https://linkedin.com/in/yourprofile" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://t.me/yourusername" target="_blank"><i class="fab fa-telegram-plane"></i></a>
-                        <a href="mailto:your@email.com"><i class="fas fa-envelope"></i></a>
+                        <a href="https://github.com/Aryan-cloud-arch" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://linkedin.com/in/aryan" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://t.me/MaiHuAryan" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="mailto:aryan@example.com"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 Your Name. Crafted with precision.</p>
+                <p>&copy; 2024 Aryan. Crafted with precision.</p>
                 <p class="footer-tagline">Logic meets creativity.</p>
             </div>
         </div>
@@ -763,4 +782,4 @@
 
     <script src="js/main.js"></script>
 </body>
-</html>
+                                                   </html>
