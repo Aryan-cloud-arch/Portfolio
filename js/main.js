@@ -15,56 +15,81 @@ function createSpaceAmbient() {
     // Create audio context
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    // Master volume (very low - soothing)
+    // Master volume - LOUD!
     masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.08; // Very silent
+    masterGain.gain.value = 0.6;
     masterGain.connect(audioContext.destination);
     
     // Deep space drone - Base frequency
     const drone1 = audioContext.createOscillator();
     drone1.type = 'sine';
-    drone1.frequency.value = 60; // Deep hum
+    drone1.frequency.value = 150;
     
     const drone1Gain = audioContext.createGain();
-    drone1Gain.gain.value = 0.3;
+    drone1Gain.gain.value = 0.4;
     drone1.connect(drone1Gain);
     drone1Gain.connect(masterGain);
     drone1.start();
     oscillators.push(drone1);
     
-    // Second harmonic
+    // Second harmonic - warmer tone
     const drone2 = audioContext.createOscillator();
     drone2.type = 'sine';
-    drone2.frequency.value = 90;
+    drone2.frequency.value = 200;
     
     const drone2Gain = audioContext.createGain();
-    drone2Gain.gain.value = 0.15;
+    drone2Gain.gain.value = 0.3;
     drone2.connect(drone2Gain);
     drone2Gain.connect(masterGain);
     drone2.start();
     oscillators.push(drone2);
     
-    // High ethereal tone
+    // Third layer - adds fullness
+    const drone3 = audioContext.createOscillator();
+    drone3.type = 'sine';
+    drone3.frequency.value = 300;
+    
+    const drone3Gain = audioContext.createGain();
+    drone3Gain.gain.value = 0.2;
+    drone3.connect(drone3Gain);
+    drone3Gain.connect(masterGain);
+    drone3.start();
+    oscillators.push(drone3);
+    
+    // High ethereal shimmer
     const highTone = audioContext.createOscillator();
     highTone.type = 'sine';
-    highTone.frequency.value = 220;
+    highTone.frequency.value = 500;
     
     const highToneGain = audioContext.createGain();
-    highToneGain.gain.value = 0.05;
+    highToneGain.gain.value = 0.15;
     highTone.connect(highToneGain);
     highToneGain.connect(masterGain);
     highTone.start();
     oscillators.push(highTone);
     
-    // Subtle frequency modulation for movement
+    // Very high sparkle
+    const sparkle = audioContext.createOscillator();
+    sparkle.type = 'sine';
+    sparkle.frequency.value = 800;
+    
+    const sparkleGain = audioContext.createGain();
+    sparkleGain.gain.value = 0.08;
+    sparkle.connect(sparkleGain);
+    sparkleGain.connect(masterGain);
+    sparkle.start();
+    oscillators.push(sparkle);
+    
+    // Slow frequency modulation for movement
     const lfo = audioContext.createOscillator();
     lfo.type = 'sine';
-    lfo.frequency.value = 0.1; // Very slow
+    lfo.frequency.value = 0.2;
     
     const lfoGain = audioContext.createGain();
-    lfoGain.gain.value = 5;
+    lfoGain.gain.value = 8;
     lfo.connect(lfoGain);
     lfoGain.connect(drone1.frequency);
+    lfoGain.connect(drone2.frequency);
     lfo.start();
     oscillators.push(lfo);
     
@@ -72,20 +97,19 @@ function createSpaceAmbient() {
     const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
     const noiseData = noiseBuffer.getChannelData(0);
     for (let i = 0; i < noiseData.length; i++) {
-        noiseData[i] = (Math.random() * 2 - 1) * 0.02;
+        noiseData[i] = (Math.random() * 2 - 1);
     }
     
     const noiseSource = audioContext.createBufferSource();
     noiseSource.buffer = noiseBuffer;
     noiseSource.loop = true;
     
-    // Filter the noise to make it smoother
     const noiseFilter = audioContext.createBiquadFilter();
     noiseFilter.type = 'lowpass';
-    noiseFilter.frequency.value = 500;
+    noiseFilter.frequency.value = 800;
     
     const noiseGain = audioContext.createGain();
-    noiseGain.gain.value = 0.5;
+    noiseGain.gain.value = 0.15;
     
     noiseSource.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
@@ -93,11 +117,10 @@ function createSpaceAmbient() {
     noiseSource.start();
     
     // Gentle pulsing effect
-    const pulseSpeed = 0.05;
     function pulse() {
         if (!isPlaying) return;
         const time = audioContext.currentTime;
-        const pulseValue = 0.06 + Math.sin(time * pulseSpeed * Math.PI * 2) * 0.02;
+        const pulseValue = 0.5 + Math.sin(time * 0.3) * 0.1;
         masterGain.gain.setTargetAtTime(pulseValue, time, 0.5);
         requestAnimationFrame(pulse);
     }
@@ -117,7 +140,6 @@ function startAmbientSound() {
         soundToggle.classList.add('playing');
         soundIcon.className = 'fas fa-volume-up';
         
-        // Remove listeners
         document.removeEventListener('scroll', startAmbientSound);
         document.removeEventListener('click', startAmbientSound);
         document.removeEventListener('mousemove', startAmbientSound);
@@ -147,14 +169,12 @@ soundToggle.addEventListener('click', (e) => {
     }
     
     if (isPlaying) {
-        // Mute
         masterGain.gain.setTargetAtTime(0, audioContext.currentTime, 0.1);
         soundToggle.classList.remove('playing');
         soundIcon.className = 'fas fa-volume-mute';
         isPlaying = false;
     } else {
-        // Unmute
-        masterGain.gain.setTargetAtTime(0.08, audioContext.currentTime, 0.1);
+        masterGain.gain.setTargetAtTime(0.6, audioContext.currentTime, 0.1);
         soundToggle.classList.add('playing');
         soundIcon.className = 'fas fa-volume-up';
         isPlaying = true;
