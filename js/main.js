@@ -1,48 +1,63 @@
 // ================================
-// Ambient Sound Control
+// Ambient Sound Control - AUTO PLAY
 // ================================
 const ambientAudio = document.getElementById('ambient-audio');
 const soundToggle = document.getElementById('sound-toggle');
 const soundIcon = document.getElementById('sound-icon');
 
-let isPlaying = false;
-
-// Set initial volume (very silent - 15%)
+// Set volume (very silent - 15%)
 ambientAudio.volume = 0.15;
 
-soundToggle.addEventListener('click', () => {
+let isPlaying = false;
+let hasStarted = false;
+
+// Function to start audio
+function startAmbientSound() {
+    if (hasStarted) return;
+    
+    ambientAudio.play().then(() => {
+        isPlaying = true;
+        hasStarted = true;
+        soundToggle.classList.add('playing');
+        soundIcon.className = 'fas fa-volume-up';
+        
+        // Remove all the listeners once started
+        document.removeEventListener('scroll', startAmbientSound);
+        document.removeEventListener('click', startAmbientSound);
+        document.removeEventListener('mousemove', startAmbientSound);
+        document.removeEventListener('keydown', startAmbientSound);
+        document.removeEventListener('touchstart', startAmbientSound);
+    }).catch(err => {
+        console.log('Waiting for user interaction to play audio...');
+    });
+}
+
+// Try to play immediately (will work if user has interacted before)
+startAmbientSound();
+
+// If autoplay blocked, start on ANY user interaction
+document.addEventListener('scroll', startAmbientSound, { once: true });
+document.addEventListener('click', startAmbientSound, { once: true });
+document.addEventListener('mousemove', startAmbientSound, { once: true });
+document.addEventListener('keydown', startAmbientSound, { once: true });
+document.addEventListener('touchstart', startAmbientSound, { once: true });
+
+// Toggle button now acts as mute/unmute
+soundToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    
     if (isPlaying) {
         ambientAudio.pause();
         soundToggle.classList.remove('playing');
         soundIcon.className = 'fas fa-volume-mute';
         isPlaying = false;
     } else {
-        ambientAudio.play().then(() => {
-            soundToggle.classList.add('playing');
-            soundIcon.className = 'fas fa-volume-up';
-            isPlaying = true;
-        }).catch(err => {
-            console.log('Audio play failed:', err);
-        });
+        ambientAudio.play();
+        soundToggle.classList.add('playing');
+        soundIcon.className = 'fas fa-volume-up';
+        isPlaying = true;
     }
 });
-
-// Show hint to enable sound after 3 seconds
-setTimeout(() => {
-    if (!isPlaying) {
-        soundToggle.style.animation = 'pulse-hint 2s ease-in-out 3';
-    }
-}, 3000);
-
-// Add pulse hint animation
-const pulseStyle = document.createElement('style');
-pulseStyle.textContent = `
-    @keyframes pulse-hint {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-        50% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
-    }
-`;
-document.head.appendChild(pulseStyle);
 
 // ================================
 // Create Floating Particles
@@ -196,7 +211,6 @@ const projectCards = document.querySelectorAll('.project-card');
 
 filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        // Remove active class from all buttons
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
@@ -221,13 +235,11 @@ const contactForm = document.getElementById('contact-form');
 contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    // Get form data
     const formData = new FormData(contactForm);
     const data = Object.fromEntries(formData);
     
     console.log('Form submitted:', data);
-    
-    alert('Message sent successfully! (Connect with Formspree for real functionality)');
+    alert('Message sent successfully!');
     contactForm.reset();
 });
 
@@ -253,7 +265,7 @@ revealElements.forEach(el => {
 });
 
 // ================================
-// Add fadeIn keyframe dynamically
+// Add fadeIn keyframe
 // ================================
 const style = document.createElement('style');
 style.textContent = `
@@ -267,8 +279,7 @@ document.head.appendChild(style);
 // ================================
 // Console Easter Egg
 // ================================
-console.log('%c🚀 Welcome to Aryan\'s Space!', 'font-size: 24px; font-weight: bold; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; color: transparent;');
-console.log('%c👀 Curious about the code? Nice!', 'font-size: 14px; color: #a1a1aa;');
+console.log('%c🚀 Welcome to Aryan\'s Space!', 'font-size: 24px; font-weight: bold;');
+console.log('%c🔊 Ambient sound auto-plays on interaction', 'font-size: 12px; color: #22c55e;');
 console.log('%c→ GitHub: https://github.com/Aryan-cloud-arch', 'font-size: 12px; color: #6366f1;');
 console.log('%c→ Telegram: @MaiHuAryan', 'font-size: 12px; color: #6366f1;');
-console.log('%c🔊 Click the sound button for ambient space vibes!', 'font-size: 12px; color: #22c55e;');
