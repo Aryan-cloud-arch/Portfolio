@@ -1,4 +1,71 @@
 // ================================
+// Ambient Sound Control
+// ================================
+const ambientAudio = document.getElementById('ambient-audio');
+const soundToggle = document.getElementById('sound-toggle');
+const soundIcon = document.getElementById('sound-icon');
+
+let isPlaying = false;
+
+// Set initial volume (very silent - 15%)
+ambientAudio.volume = 0.15;
+
+soundToggle.addEventListener('click', () => {
+    if (isPlaying) {
+        ambientAudio.pause();
+        soundToggle.classList.remove('playing');
+        soundIcon.className = 'fas fa-volume-mute';
+        isPlaying = false;
+    } else {
+        ambientAudio.play().then(() => {
+            soundToggle.classList.add('playing');
+            soundIcon.className = 'fas fa-volume-up';
+            isPlaying = true;
+        }).catch(err => {
+            console.log('Audio play failed:', err);
+        });
+    }
+});
+
+// Show hint to enable sound after 3 seconds
+setTimeout(() => {
+    if (!isPlaying) {
+        soundToggle.style.animation = 'pulse-hint 2s ease-in-out 3';
+    }
+}, 3000);
+
+// Add pulse hint animation
+const pulseStyle = document.createElement('style');
+pulseStyle.textContent = `
+    @keyframes pulse-hint {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+        50% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
+    }
+`;
+document.head.appendChild(pulseStyle);
+
+// ================================
+// Create Floating Particles
+// ================================
+const particlesContainer = document.getElementById('particles');
+
+function createParticles() {
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particle.style.width = (Math.random() * 3 + 1) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        particlesContainer.appendChild(particle);
+    }
+}
+
+createParticles();
+
+// ================================
 // Loader
 // ================================
 window.addEventListener('load', () => {
@@ -23,7 +90,7 @@ document.addEventListener('mousemove', (e) => {
     }, 100);
 });
 
-document.querySelectorAll('a, button, .project-card, .expertise-card').forEach(el => {
+document.querySelectorAll('a, button, .project-card, .expertise-card, .sound-toggle').forEach(el => {
     el.addEventListener('mouseenter', () => {
         cursorFollower.classList.add('hovering');
     });
@@ -158,19 +225,16 @@ contactForm.addEventListener('submit', (e) => {
     const formData = new FormData(contactForm);
     const data = Object.fromEntries(formData);
     
-    // Here you would typically send to a server
-    // For GitHub Pages, you can use Formspree, Netlify Forms, etc.
     console.log('Form submitted:', data);
     
-    // Show success message
-    alert('Message sent successfully! (Demo - integrate with Formspree for real functionality)');
+    alert('Message sent successfully! (Connect with Formspree for real functionality)');
     contactForm.reset();
 });
 
 // ================================
 // Smooth Reveal Animation
 // ================================
-const revealElements = document.querySelectorAll('.expertise-card, .project-card, .insight-card, .highlight');
+const revealElements = document.querySelectorAll('.expertise-card, .project-card, .insight-card, .highlight, .contact-card');
 
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -189,38 +253,6 @@ revealElements.forEach(el => {
 });
 
 // ================================
-// Typing Effect (Optional Enhancement)
-// ================================
-const addTypingEffect = () => {
-    const codeContent = document.querySelector('.code-content code');
-    if (!codeContent) return;
-    
-    const originalHTML = codeContent.innerHTML;
-    codeContent.innerHTML = '';
-    
-    let i = 0;
-    const typeWriter = () => {
-        if (i < originalHTML.length) {
-            codeContent.innerHTML = originalHTML.substring(0, i + 1);
-            i++;
-            setTimeout(typeWriter, 10);
-        }
-    };
-    
-    const codeObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-            typeWriter();
-            codeObserver.disconnect();
-        }
-    });
-    
-    codeObserver.observe(codeContent);
-};
-
-// Uncomment to enable typing effect
-// addTypingEffect();
-
-// ================================
 // Add fadeIn keyframe dynamically
 // ================================
 const style = document.createElement('style');
@@ -235,6 +267,8 @@ document.head.appendChild(style);
 // ================================
 // Console Easter Egg
 // ================================
-console.log('%c👋 Hey there, curious developer!', 'font-size: 20px; font-weight: bold;');
-console.log('%cLooking at the code? Nice! Feel free to reach out.', 'font-size: 14px;');
-console.log('%c→ GitHub: https://github.com/yourusername', 'font-size: 12px; color: #6366f1;');
+console.log('%c🚀 Welcome to Aryan\'s Space!', 'font-size: 24px; font-weight: bold; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; color: transparent;');
+console.log('%c👀 Curious about the code? Nice!', 'font-size: 14px; color: #a1a1aa;');
+console.log('%c→ GitHub: https://github.com/Aryan-cloud-arch', 'font-size: 12px; color: #6366f1;');
+console.log('%c→ Telegram: @MaiHuAryan', 'font-size: 12px; color: #6366f1;');
+console.log('%c🔊 Click the sound button for ambient space vibes!', 'font-size: 12px; color: #22c55e;');
